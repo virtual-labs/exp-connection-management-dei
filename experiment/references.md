@@ -1,10 +1,3 @@
-
-https://www.tech-invite.com/3m23/toc/tinv-3gpp-23-501_u.html
-
-https://www.tech-invite.com/3m23/toc/tinv-3gpp-23-502_e.html
-
-https://itecspec.com/spec/3gpp-23-502-4-2-3-service-request-procedures/
-
-https://www.scribd.com/document/616721811/23501-g20
-
-https://itecspec.com/spec/3gpp-24-501-5-6-5gmm-connection-management-procedures/
+1. Silveira, L. B., De Resende, H. C., Both, C. B., Marquez-Barja, J. M., Silvestre, B., & Cardoso, K. V. (2022). Tutorial on communication between access networks and the 5G core. Computer Networks, 216, 109301.
+2. TS 123 502 - V15.5.1 - 5G; Procedures for the 5G System (5GS) (3GPP TS 23.502 version 15.5.1 Release 15)
+3. Patil, R., Tian, Z., Gurusamy, M., & McCloud, J. (2025). 5G core network control plane: Network security challenges and solution requirements. Computer Communications, 229, 107982.
