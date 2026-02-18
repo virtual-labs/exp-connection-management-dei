@@ -1,0 +1,3 @@
+1. Silveira, L. B., De Resende, H. C., Both, C. B., Marquez-Barja, J. M., Silvestre, B., & Cardoso, K. V. (2022). Tutorial on communication between access networks and the 5G core. Computer Networks, 216, 109301.
+2. TS 123 502 - V15.5.1 - 5G; Procedures for the 5G System (5GS) (3GPP TS 23.502 version 15.5.1 Release 15)
+3. Patil, R., Tian, Z., Gurusamy, M., & McCloud, J. (2025). 5G core network control plane: Network security challenges and solution requirements. Computer Communications, 229, 107982.

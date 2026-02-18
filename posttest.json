@@ -1,0 +1,260 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "What is the primary purpose of deploying the Core Network before starting the Connection Management experiment?",
+      "answers": {
+        "a": "To enable UE authentication only",
+        "b": "To ensure all Network Functions are instantiated and interconnected",
+        "c": "To activate user plane traffic immediately",
+        "d": "To bypass NAS signaling procedures"
+      },
+      "explanations": {
+        "a": "Incorrect. Authentication is only one part of core network functionality.",
+        "b": "Correct. All NFs must be deployed and connected for signaling to occur.",
+        "c": "Incorrect. User plane traffic requires session establishment.",
+        "d": "Incorrect. NAS signaling is essential to the experiment."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which button switches the interface into Connection Management experiment mode?",
+      "answers": {
+        "a": "Deploy Core",
+        "b": "Add NF",
+        "c": "Connection Management",
+        "d": "Topology Reset"
+      },
+      "explanations": {
+        "a": "Incorrect. Deploy Core only instantiates the network.",
+        "b": "Incorrect. Add NF is for manual deployment.",
+        "c": "Correct. This enables the Connection Management experiment view.",
+        "d": "Incorrect. Reset clears the topology."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which message initiates the radio connection establishment between UE and gNB?",
+      "answers": {
+        "a": "RRC Connection Setup",
+        "b": "RRC Connection Request",
+        "c": "NAS Service Request",
+        "d": "Initial Context Setup Request"
+      },
+      "explanations": {
+        "a": "Incorrect. This is sent by the gNB.",
+        "b": "Correct. UE sends RRC Connection Request to initiate radio access.",
+        "c": "Incorrect. NAS Service Request is sent after RRC setup.",
+        "d": "Incorrect. This occurs later via AMF."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What information is included in the RRC Connection Request message?",
+      "answers": {
+        "a": "QoS Flow Identifier",
+        "b": "UE identity and establishment cause",
+        "c": "Tunnel Endpoint Identifiers",
+        "d": "PDU Session ID"
+      },
+      "explanations": {
+        "a": "Incorrect. QFI is used during PDU session setup.",
+        "b": "Correct. UE identity and cause are part of the RRC request.",
+        "c": "Incorrect. TEIDs are allocated later.",
+        "d": "Incorrect. PDU Session ID is not part of RRC request."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which entity allocates radio resources during RRC Connection Setup?",
+      "answers": {
+        "a": "UE",
+        "b": "AMF",
+        "c": "gNB",
+        "d": "SMF"
+      },
+      "explanations": {
+        "a": "Incorrect. UE requests but does not allocate resources.",
+        "b": "Incorrect. AMF handles control-plane signaling.",
+        "c": "Correct. gNB allocates radio resources.",
+        "d": "Incorrect. SMF handles session management."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which message carries the NAS Service Request from UE toward the core network?",
+      "answers": {
+        "a": "RRC Connection Setup",
+        "b": "RRC Connection Setup Complete",
+        "c": "PFCP Session Establishment Request",
+        "d": "Update SM Context Request"
+      },
+      "explanations": {
+        "a": "Incorrect. This is sent by gNB.",
+        "b": "Correct. NAS Service Request is embedded in this message.",
+        "c": "Incorrect. PFCP is between SMF and UPF.",
+        "d": "Incorrect. This is sent by AMF."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which interface is used by the UE to send NAS messages to the AMF?",
+      "answers": {
+        "a": "N2",
+        "b": "N3",
+        "c": "N1",
+        "d": "N4"
+      },
+      "explanations": {
+        "a": "Incorrect. N2 is between gNB and AMF.",
+        "b": "Incorrect. N3 carries user plane data.",
+        "c": "Correct. N1 is the NAS signaling interface.",
+        "d": "Incorrect. N4 is used for PFCP."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What is the role of the AMF after receiving the NAS Service Request?",
+      "answers": {
+        "a": "Forward user plane traffic",
+        "b": "Validate UE context and credentials",
+        "c": "Allocate radio resources",
+        "d": "Install PFCP rules"
+      },
+      "explanations": {
+        "a": "Incorrect. User plane is handled by UPF.",
+        "b": "Correct. AMF validates UE context and authorization.",
+        "c": "Incorrect. Radio resources are managed by gNB.",
+        "d": "Incorrect. PFCP rules are managed by SMF."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which message does the AMF send to the SMF to request session-related processing?",
+      "answers": {
+        "a": "PFCP Session Establishment Request",
+        "b": "Update SM Context Request",
+        "c": "PDU Session Resource Setup Request",
+        "d": "NAS Service Accept"
+      },
+      "explanations": {
+        "a": "Incorrect. PFCP is used by SMF toward UPF.",
+        "b": "Correct. AMF uses this message toward SMF.",
+        "c": "Incorrect. This message is sent to gNB.",
+        "d": "Incorrect. This is sent to UE."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which network function selects the UPF and allocates TEIDs?",
+      "answers": {
+        "a": "AMF",
+        "b": "gNB",
+        "c": "SMF",
+        "d": "UPF"
+      },
+      "explanations": {
+        "a": "Incorrect. AMF does not manage user plane tunnels.",
+        "b": "Incorrect. gNB terminates but does not select UPF.",
+        "c": "Correct. SMF performs UPF selection and TEID allocation.",
+        "d": "Incorrect. UPF responds to requests."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which protocol is used between SMF and UPF to establish user plane sessions?",
+      "answers": {
+        "a": "NGAP",
+        "b": "NAS",
+        "c": "PFCP",
+        "d": "RRC"
+      },
+      "explanations": {
+        "a": "Incorrect. NGAP is between gNB and AMF.",
+        "b": "Incorrect. NAS is UE-AMF signaling.",
+        "c": "Correct. PFCP is used on the N4 interface.",
+        "d": "Incorrect. RRC is radio layer signaling."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What does the PFCP Session Establishment Response confirm?",
+      "answers": {
+        "a": "UE authentication success",
+        "b": "Radio bearer configuration",
+        "c": "Successful creation of user plane session",
+        "d": "Completion of NAS registration"
+      },
+      "explanations": {
+        "a": "Incorrect. Authentication occurs earlier.",
+        "b": "Incorrect. Radio bearers are handled by gNB.",
+        "c": "Correct. UPF confirms PFCP session establishment.",
+        "d": "Incorrect. Registration is a different procedure."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which message carries the tunnel information back from SMF to AMF?",
+      "answers": {
+        "a": "NAS Service Accept",
+        "b": "Update SM Context Response",
+        "c": "PDU Session Resource Setup Response",
+        "d": "RRC Connection Setup"
+      },
+      "explanations": {
+        "a": "Incorrect. This is sent to UE.",
+        "b": "Correct. SMF sends tunnel details in this response.",
+        "c": "Incorrect. This is sent by gNB.",
+        "d": "Incorrect. This is part of RRC."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which interface is used by the AMF to instruct the gNB to set up PDU session resources?",
+      "answers": {
+        "a": "N1",
+        "b": "N2",
+        "c": "N3",
+        "d": "N4"
+      },
+      "explanations": {
+        "a": "Incorrect. N1 is UE-AMF NAS signaling.",
+        "b": "Correct. N2 connects AMF and gNB.",
+        "c": "Incorrect. N3 is user plane.",
+        "d": "Incorrect. N4 is SMF-UPF."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which final message confirms to the UE that the PDU session is established?",
+      "answers": {
+        "a": "PDU Session Resource Setup Response",
+        "b": "RRC Connection Setup Complete",
+        "c": "NAS Service Accept",
+        "d": "Update SM Context Response"
+      },
+      "explanations": {
+        "a": "Incorrect. This is sent to AMF.",
+        "b": "Incorrect. This completes RRC setup.",
+        "c": "Correct. NAS Service Accept confirms session establishment.",
+        "d": "Incorrect. This is internal to core network."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    }
+  ]
+}
