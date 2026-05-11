@@ -1,260 +1,263 @@
 {
   "version": 2.0,
+  "filters": {
+    "difficulty": ["beginner", "intermediate"]
+  },
   "questions": [
     {
-      "question": "In 5G CM, which layer primarily governs CM-IDLE and CM-CONNECTED states?",
+      "question": "Q1. In 5G CM, which layer primarily governs CM-IDLE and CM-CONNECTED states?",
       "answers": {
         "a": "Radio Resource Control (RRC)",
         "b": "NAS (Non-Access Stratum)",
         "c": "SCTP Layer",
         "d": "PHY Layer"
       },
-      "explanations": {
-        "a": "Incorrect. RRC manages radio connection states, not CM states.",
-        "b": "Correct. CM states are defined and managed at the NAS layer.",
-        "c": "Incorrect. SCTP is a transport protocol for signaling.",
-        "d": "Incorrect. PHY handles physical layer transmission."
-      },
       "correctAnswer": "b",
-      "difficulty": "beginner"
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect. RRC manages radio connection states.",
+        "b": "Correct. CM states are managed at NAS layer.",
+        "c": "Incorrect. SCTP is transport protocol.",
+        "d": "Incorrect. PHY handles physical transmission."
+      }
     },
     {
-      "question": "What is the primary purpose of the CM-IDLE state?",
+      "question": "Q2. What is the primary purpose of the CM-IDLE state?",
       "answers": {
-        "a": "UE maintains an RRC connection but no NAS connection",
-        "b": "UE has no MM or SM context",
-        "c": "UE is reachable and has an active NAS connection but without an RRC connection",
-        "d": "UE is fully detached from the network"
-      },
-      "explanations": {
-        "a": "Incorrect. CM-IDLE does not maintain an RRC connection.",
-        "b": "Incorrect. MM context exists in CM-IDLE.",
-        "c": "Correct. UE is reachable via paging without an active RRC connection.",
-        "d": "Incorrect. Detached UE is in deregistered state."
+        "a": "Maintain RRC connection",
+        "b": "No MM context exists",
+        "c": "UE reachable without RRC connection",
+        "d": "UE detached"
       },
       "correctAnswer": "c",
-      "difficulty": "beginner"
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Incorrect.",
+        "c": "Correct. UE is reachable via paging.",
+        "d": "Incorrect."
+      }
     },
     {
-      "question": "Which of the following triggers a UE to move from CM-IDLE to CM-CONNECTED?",
+      "question": "Q3. Which procedure triggers transition from CM-IDLE to CM-CONNECTED?",
       "answers": {
-        "a": "A periodic registration update",
-        "b": "Service Request procedure",
-        "c": "UE SIM refresh",
-        "d": "UE entering airplane mode"
-      },
-      "explanations": {
-        "a": "Incorrect. Periodic registration does not establish CM-CONNECTED.",
-        "b": "Correct. Service Request triggers transition to CM-CONNECTED.",
-        "c": "Incorrect. SIM refresh is unrelated to CM state transition.",
-        "d": "Incorrect. Airplane mode detaches the UE."
+        "a": "Periodic Registration",
+        "b": "Service Request",
+        "c": "SIM Refresh",
+        "d": "Airplane Mode"
       },
       "correctAnswer": "b",
-      "difficulty": "beginner"
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
     },
     {
-      "question": "Which message does the UE send to initiate the Service Request procedure?",
+      "question": "Q4. Which message carries the NAS Service Request to AMF?",
       "answers": {
         "a": "RRC Setup Complete",
-        "b": "Registration Request",
-        "c": "InitialUEMessage with NAS Service Request",
+        "b": "Initial UE Message",
+        "c": "NGAP Paging",
         "d": "Path Switch Request"
       },
+      "correctAnswer": "b",
+      "difficulty": "intermediate",
       "explanations": {
-        "a": "Incorrect. This message completes RRC setup.",
-        "b": "Incorrect. Registration Request is for mobility management.",
-        "c": "Correct. Service Request is sent inside InitialUEMessage.",
-        "d": "Incorrect. Path Switch is used during handover."
-      },
-      "correctAnswer": "c",
-      "difficulty": "beginner"
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
     },
     {
-      "question": "Which network function restores user context after receiving the Service Request?",
+      "question": "Q5. Which NF restores UE access context during Service Request?",
       "answers": {
         "a": "UPF",
         "b": "SMF",
         "c": "AMF",
         "d": "PCF"
       },
-      "explanations": {
-        "a": "Incorrect. UPF handles user plane forwarding.",
-        "b": "Incorrect. SMF manages sessions, not access context restoration.",
-        "c": "Correct. AMF restores UE access and mobility context.",
-        "d": "Incorrect. PCF handles policy control."
-      },
       "correctAnswer": "c",
-      "difficulty": "beginner"
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Incorrect.",
+        "c": "Correct.",
+        "d": "Incorrect."
+      }
     },
     {
-      "question": "After a successful Service Request, which state does the UE enter?",
+      "question": "Q6. After Service Request completion, UE state becomes:",
       "answers": {
         "a": "Deregistered",
         "b": "CM-IDLE",
         "c": "CM-CONNECTED",
         "d": "SM-INACTIVE"
       },
-      "explanations": {
-        "a": "Incorrect. Deregistered means UE is detached.",
-        "b": "Incorrect. CM-IDLE is the previous state.",
-        "c": "Correct. UE transitions to CM-CONNECTED.",
-        "d": "Incorrect. SM state is independent of CM state."
-      },
       "correctAnswer": "c",
-      "difficulty": "beginner"
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Incorrect.",
+        "c": "Correct.",
+        "d": "Incorrect."
+      }
     },
     {
-      "question": "What is the main objective of the UE Context Release procedure?",
+      "question": "Q7. What is preserved during UE Context Release?",
       "answers": {
-        "a": "To deregister the UE permanently",
-        "b": "To remove the UE’s subscription profile",
-        "c": "To release RRC and NGAP resources while preserving UE NAS context",
-        "d": "To shut down the UE’s radio interface"
+        "a": "RRC connection",
+        "b": "NAS context",
+        "c": "Radio bearer",
+        "d": "PHY resources"
       },
+      "correctAnswer": "b",
+      "difficulty": "intermediate",
       "explanations": {
-        "a": "Incorrect. Context release does not deregister UE.",
-        "b": "Incorrect. Subscription data remains intact.",
-        "c": "Correct. Access resources are released while NAS context is preserved.",
-        "d": "Incorrect. Radio interface shutdown is UE-controlled."
-      },
-      "correctAnswer": "c",
-      "difficulty": "beginner"
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
     },
     {
-      "question": "Who typically initiates the UE Context Release Command?",
+      "question": "Q8. Who initiates UE Context Release Command?",
       "answers": {
         "a": "UE",
         "b": "AMF",
         "c": "SMF",
-        "d": "gNB AMF interface"
-      },
-      "explanations": {
-        "a": "Incorrect. UE does not send release command.",
-        "b": "Correct. AMF initiates UE Context Release.",
-        "c": "Incorrect. SMF is not involved in access release.",
-        "d": "Incorrect. This is an interface, not an entity."
+        "d": "gNB"
       },
       "correctAnswer": "b",
-      "difficulty": "beginner"
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
     },
     {
-      "question": "Which message does the gNB send back after receiving UE Context Release Command?",
+      "question": "Q9. Which message confirms UE Context Release completion?",
       "answers": {
         "a": "Initial Context Setup Response",
         "b": "UEContextReleaseComplete",
-        "c": "Service Request Complete",
-        "d": "ResourceStatusResponse"
-      },
-      "explanations": {
-        "a": "Incorrect. This is sent during context setup.",
-        "b": "Correct. gNB confirms release with UEContextReleaseComplete.",
-        "c": "Incorrect. No such message exists.",
-        "d": "Incorrect. This is used for resource reporting."
+        "c": "Service Accept",
+        "d": "NG Reset"
       },
       "correctAnswer": "b",
-      "difficulty": "beginner"
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
     },
     {
-      "question": "What happens to user-plane tunnels when UE Context Release occurs?",
+      "question": "Q10. What happens to user-plane tunnels during context release?",
       "answers": {
-        "a": "They are permanently removed",
-        "b": "They remain active but suspended",
-        "c": "They are unaffected",
-        "d": "Only SMF-user tunnels are kept"
-      },
-      "explanations": {
-        "a": "Incorrect. Sessions are not deleted.",
-        "b": "Correct. User-plane tunnels are preserved but inactive.",
-        "c": "Incorrect. They are logically suspended.",
-        "d": "Incorrect. Tunnel handling is centralized."
+        "a": "Deleted permanently",
+        "b": "Suspended",
+        "c": "Unaffected",
+        "d": "Moved to SMF"
       },
       "correctAnswer": "b",
-      "difficulty": "beginner"
+      "difficulty": "intermediate",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
     },
     {
-      "question": "Which condition typically leads to network-initiated UE Context Release?",
+      "question": "Q11. What triggers network-initiated context release?",
       "answers": {
-        "a": "UE sends periodic Tracking Area Update",
-        "b": "Inactivity timer expiry in gNB",
-        "c": "UE switches from NR to LTE",
-        "d": "UPF modifies PDR rules"
-      },
-      "explanations": {
-        "a": "Incorrect. TAU does not trigger context release.",
-        "b": "Correct. Inactivity timer expiry causes release.",
-        "c": "Incorrect. Inter-RAT mobility follows different procedures.",
-        "d": "Incorrect. PDR changes are user-plane related."
+        "a": "TAU",
+        "b": "Inactivity timer expiry",
+        "c": "Handover",
+        "d": "PFCP update"
       },
       "correctAnswer": "b",
-      "difficulty": "beginner"
-    },
-    {
-      "question": "During CM-IDLE, the UE remains reachable for paging through which mechanism?",
-      "answers": {
-        "a": "NGAP Control Signalling",
-        "b": "SDAP QoS Flow",
-        "c": "AMF Registration Area and Paging procedure",
-        "d": "SCTP retransmission"
-      },
+      "difficulty": "beginner",
       "explanations": {
-        "a": "Incorrect. NGAP is not used directly for paging reachability.",
-        "b": "Incorrect. SDAP handles QoS mapping.",
-        "c": "Correct. Paging is handled via AMF registration area.",
-        "d": "Incorrect. SCTP handles transport reliability."
-      },
-      "correctAnswer": "c",
-      "difficulty": "beginner"
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
     },
     {
-      "question": "Which entity triggers paging when downlink data arrives for an IDLE UE?",
+      "question": "Q12. Paging in CM-IDLE is managed by:",
+      "answers": {
+        "a": "UPF only",
+        "b": "AMF via registration area",
+        "c": "SMF",
+        "d": "SCTP"
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q13. Which entity triggers paging on downlink data?",
       "answers": {
         "a": "UPF",
         "b": "gNB",
-        "c": "SMF",
+        "c": "PCF",
         "d": "AUSF"
       },
-      "explanations": {
-        "a": "Correct. UPF detects downlink data and notifies control plane.",
-        "b": "Incorrect. gNB performs paging but does not trigger it.",
-        "c": "Incorrect. SMF manages sessions.",
-        "d": "Incorrect. AUSF handles authentication."
-      },
       "correctAnswer": "a",
-      "difficulty": "beginner"
+      "difficulty": "intermediate",
+      "explanations": {
+        "a": "Correct.",
+        "b": "Incorrect.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
     },
     {
-      "question": "When the UE receives paging and needs to send a NAS Service Request, which RRC state must it establish?",
+      "question": "Q14. Which RRC state is required before sending Service Request?",
       "answers": {
         "a": "RRC-INACTIVE",
-        "b": "RRC-SUSPENDED",
-        "c": "RRC-CONNECTED",
-        "d": "RRC-NULL"
+        "b": "RRC-CONNECTED",
+        "c": "RRC-NULL",
+        "d": "RRC-IDLE"
       },
+      "correctAnswer": "b",
+      "difficulty": "beginner",
       "explanations": {
-        "a": "Incorrect. RRC-INACTIVE still lacks full connectivity.",
-        "b": "Incorrect. RRC-SUSPENDED is not a valid 5G state.",
-        "c": "Correct. UE must establish RRC-CONNECTED.",
-        "d": "Incorrect. RRC-NULL indicates no connection."
-      },
-      "correctAnswer": "c",
-      "difficulty": "beginner"
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
     },
     {
-      "question": "Which statement best describes the CM-IDLE to CM-CONNECTED transition?",
+      "question": "Q15. CM-IDLE to CM-CONNECTED transition involves:",
       "answers": {
-        "a": "It requires complete deregistration of the UE",
-        "b": "It is triggered only by the network",
-        "c": "It involves re-establishing RRC connection and restoring UE context",
-        "d": "It deletes all user plane sessions"
+        "a": "Deregistration",
+        "b": "RRC re-establishment + context restore",
+        "c": "Session deletion",
+        "d": "Authentication restart"
       },
+      "correctAnswer": "b",
+      "difficulty": "intermediate",
       "explanations": {
-        "a": "Incorrect. Deregistration is not required.",
-        "b": "Incorrect. UE or network can trigger it.",
-        "c": "Correct. RRC is re-established and context is restored.",
-        "d": "Incorrect. User plane sessions are preserved."
-      },
-      "correctAnswer": "c",
-      "difficulty": "beginner"
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
     }
   ]
 }
