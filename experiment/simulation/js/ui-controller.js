@@ -567,6 +567,8 @@ class UIController {
 
         console.log('✅ Topology cleared');
         alert('Topology cleared successfully!');
+        // Full refresh ensures complete re-initialization of all managers and UI state
+        window.location.reload();
     }
 
     /**
@@ -725,6 +727,18 @@ class UIController {
     showNFConfigurationForNewNF(nfType) {
         const configForm = document.getElementById('config-form');
         if (!configForm) return;
+
+        // Check if this NF type already exists (except UE which allows 2)
+        const allNFs = window.dataStore?.getAllNFs() || [];
+        const existingNFsOfType = allNFs.filter(nf => nf.type === nfType);
+        
+        if (nfType !== 'UE' && existingNFsOfType.length > 0) {
+            // Block duplicate NF types (except UE)
+            const existingNames = existingNFsOfType.map(nf => nf.name).join(', ');
+            alert(`❌ Duplicate NF Type Not Allowed!\n\n${nfType} already exists in the topology: ${existingNames}\n\nYou can only deploy one instance of each Network Function type.\n\nTo add another ${nfType}, please delete the existing one first.`);
+            console.warn(`⚠️ Blocked duplicate NF type: ${nfType} (existing: ${existingNames})`);
+            return;
+        }
 
         // Get NF definition for defaults
         const nfDef = window.nfManager?.getNFDefinition(nfType) || { name: nfType, color: '#95a5a6' };
@@ -972,14 +986,11 @@ class UIController {
                 
                 <button class="btn btn-danger btn-block" id="btn-delete-nf" style="margin-top: 15px;">Delete UE</button>
                 
-                <div class="troubleshoot-section">
-                    <h4>🔧 Troubleshoot</h4>
-                    <p class="config-hint">Open Windows-style terminal for network diagnostics</p>
-                    
-                    <button class="btn btn-terminal btn-block" id="btn-open-terminal">
-                        💻 Open Command Prompt
-                    </button>
-                </div>
+                
+                <button class="btn btn-terminal btn-block" id="btn-open-terminal">
+                    💻 Open Command Prompt
+                </button>
+                
             `;
         } else {
             // Standard configuration for other NF types
@@ -1032,14 +1043,11 @@ class UIController {
             </div>
             ` : ''}
             
-            <div class="troubleshoot-section">
-                <h4>🔧 Troubleshoot</h4>
-                <p class="config-hint">Open Windows-style terminal for network diagnostics</p>
-                
-                <button class="btn btn-terminal btn-block" id="btn-open-terminal">
-                    💻 Open Command Prompt
-                </button>
-            </div>
+            
+            <button class="btn btn-terminal btn-block" id="btn-open-terminal">
+                💻 Open Command Prompt
+            </button>
+            
         `;
         }
 
@@ -2583,28 +2591,18 @@ class UIController {
         terminalModal.className = 'windows-terminal-modal';
         
         terminalModal.innerHTML = `
-            <div class="windows-terminal-window" data-terminal-type="${nf.type}" style="position:absolute; left: 10vw; top: 10vh;">
+            <div class="windows-terminal-window" data-terminal-type="${nf.type}" style="position:fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 900px; height: 600px; z-index: 2000;">
                 <div class="windows-terminal-titlebar">
                     <div class="terminal-title">
                         <span class="terminal-icon">⬛</span>
-                        Command Prompt - ${nf.name} (${nf.config.ipAddress})
+                        ${nf.name} Terminal
                     </div>
                     <div class="terminal-controls">
-                        <button class="terminal-btn minimize">−</button>
-                        <button class="terminal-btn maximize">□</button>
-                        <button class="terminal-btn close" id="terminal-close">×</button>
+                        <button class="terminal-btn close" id="terminal-close" title="Close">×</button>
                     </div>
                 </div>
                 <div class="windows-terminal-content" id="terminal-content">
-                    <div class="terminal-header">
-                        Microsoft Windows [Version 10.0.19045.3570]<br>
-                        (c) Microsoft Corporation. All rights reserved.<br><br>
-                    </div>
                     <div class="terminal-output" id="terminal-output"></div>
-                    <div class="terminal-input-line">
-                        <span class="terminal-prompt">C:\\${nf.name}></span>
-                        <input type="text" id="terminal-input" class="terminal-input" autocomplete="off" spellcheck="false">
-                    </div>
                 </div>
             </div>
         `;
@@ -2618,12 +2616,6 @@ class UIController {
         setTimeout(() => {
             terminalModal.classList.add('show');
         }, 10);
-
-        // Focus on input
-        const input = document.getElementById('terminal-input');
-        if (input) {
-            input.focus();
-        }
     }
 
     /**
@@ -2633,12 +2625,18 @@ class UIController {
      */
     setupWindowsTerminal(nf, terminalModal) {
         const win = terminalModal.querySelector('.windows-terminal-window');
-        const input = terminalModal.querySelector('#terminal-input');
         const output = terminalModal.querySelector('#terminal-output');
         const closeBtn = terminalModal.querySelector('#terminal-close');
         
-        let commandHistory = [];
-        let historyIndex = -1;
+        // Command history for Up/Down navigation
+        this.nfCommandHistory = this.nfCommandHistory || {};
+        this.nfCommandHistory[nf.id] = this.nfCommandHistory[nf.id] || [];
+        this.nfHistoryIndex = this.nfHistoryIndex || {};
+        this.nfHistoryIndex[nf.id] = -1;
+        this.nfCurrentInput = this.nfCurrentInput || {};
+        this.nfCurrentInput[nf.id] = '';
+        this.nfCursorPosition = this.nfCursorPosition || {};
+        this.nfCursorPosition[nf.id] = 0;
 
         // Close button - cleanup iperf3 server if running
         closeBtn.addEventListener('click', () => {
@@ -2653,100 +2651,349 @@ class UIController {
             }, 300);
         });
 
-        // Make window draggable by titlebar
-        const titlebar = terminalModal.querySelector('.windows-terminal-titlebar');
-        let dragging = false, dx = 0, dy = 0;
-        titlebar.addEventListener('mousedown', (e) => {
-            dragging = true;
-            dx = e.clientX - win.offsetLeft;
-            dy = e.clientY - win.offsetTop;
-            document.body.style.userSelect = 'none';
-        });
-        document.addEventListener('mousemove', (e) => {
-            if (!dragging) return;
-            win.style.left = `${e.clientX - dx}px`;
-            win.style.top = `${e.clientY - dy}px`;
-        });
-        document.addEventListener('mouseup', () => {
-            dragging = false;
-            document.body.style.userSelect = '';
-        });
-
-        // Resizer (bottom-right)
-        let resizer = win.querySelector('.terminal-resizer');
-        if (!resizer) {
-            resizer = document.createElement('div');
-            resizer.className = 'terminal-resizer';
-            win.appendChild(resizer);
-        }
-        let resizing = false, sw = 0, sh = 0, sx = 0, sy = 0;
-        resizer.addEventListener('mousedown', (e) => {
-            resizing = true;
-            sw = win.offsetWidth;
-            sh = win.offsetHeight;
-            sx = e.clientX;
-            sy = e.clientY;
-            e.preventDefault();
-        });
-        document.addEventListener('mousemove', (e) => {
-            if (!resizing) return;
-            const w = Math.max(600, sw + (e.clientX - sx));
-            const h = Math.max(380, sh + (e.clientY - sy));
-            win.style.width = `${w}px`;
-            win.style.height = `${h}px`;
-        });
-        document.addEventListener('mouseup', () => {
-            resizing = false;
-        });
-
-        // Input handling
-        input.addEventListener('keydown', async (e) => {
-            // Handle Ctrl+C to stop iperf3 server
-            if (e.ctrlKey && e.key === 'c' && this.iperf3Servers.has(nf.id)) {
-                e.preventDefault();
-                this.stopIperf3Server(nf, output);
-                input.value = '';
-                return;
-            }
-            
-            if (e.key === 'Enter') {
-                const command = input.value.trim();
-                if (command) {
-                    // Add to history
-                    commandHistory.push(command);
-                    historyIndex = commandHistory.length;
-
-                    // Display command
-                    this.addTerminalLine(output, `C:\\${nf.name}>${command}`, 'command');
-                    
-                    // Clear input
-                    input.value = '';
-
-                    // Process command
-                    await this.processWindowsCommand(nf, command, output);
-                }
-            } else if (e.key === 'ArrowUp') {
-                e.preventDefault();
-                if (historyIndex > 0) {
-                    historyIndex--;
-                    input.value = commandHistory[historyIndex];
-                }
-            } else if (e.key === 'ArrowDown') {
-                e.preventDefault();
-                if (historyIndex < commandHistory.length - 1) {
-                    historyIndex++;
-                    input.value = commandHistory[historyIndex];
-                } else {
-                    historyIndex = commandHistory.length;
-                    input.value = '';
-                }
-            }
-        });
+        // Setup keyboard handling for this NF terminal once
+        this.setupNFKeyboardHandling(nf, terminalModal, output);
 
         // Initial welcome message
         this.addTerminalLine(output, `Connected to ${nf.name} (${nf.config.ipAddress})`, 'info');
         this.addTerminalLine(output, 'Type "help" for available commands.', 'info');
-        this.addTerminalLine(output, '', 'blank');
+
+        // Create initial input line
+        this.createNFInputLine(nf, output);
+    }
+
+    /**
+     * Create a new inline input line for NF terminal
+     * @param {Object} nf - Network Function
+     * @param {HTMLElement} output - Output element
+     */
+    createNFInputLine(nf, output) {
+        // Remove any existing input line
+        const existingInput = output.querySelector(`#active-nf-input-${nf.id}`);
+        if (existingInput) {
+            existingInput.remove();
+        }
+
+        // Create input line container
+        const inputLine = document.createElement('div');
+        inputLine.id = `active-nf-input-${nf.id}`;
+        inputLine.className = 'terminal-input-line';
+        inputLine.innerHTML = `
+            <span class="terminal-prompt" style="color: #ffffff;">${nf.name}></span>
+            <span class="terminal-input-before" id="nf-input-before-${nf.id}"></span>
+            <span class="terminal-cursor" id="nf-cursor-${nf.id}">█</span>
+            <span class="terminal-input-after" id="nf-input-after-${nf.id}"></span>
+        `;
+        output.appendChild(inputLine);
+
+        // Store reference to input text elements
+        this.nfInputBeforeEl = this.nfInputBeforeEl || {};
+        this.nfInputBeforeEl[nf.id] = document.getElementById(`nf-input-before-${nf.id}`);
+        this.nfInputAfterEl = this.nfInputAfterEl || {};
+        this.nfInputAfterEl[nf.id] = document.getElementById(`nf-input-after-${nf.id}`);
+        this.nfCursorEl = this.nfCursorEl || {};
+        this.nfCursorEl[nf.id] = document.getElementById(`nf-cursor-${nf.id}`);
+
+        // Scroll to bottom
+        output.scrollTop = output.scrollHeight;
+
+        // Start cursor blink
+        this.startNFCursorBlink(nf.id);
+    }
+
+    /**
+     * Start cursor blinking animation for NF terminal
+     * @param {string} nfId - NF ID
+     */
+    startNFCursorBlink(nfId) {
+        // Clear existing blink interval
+        if (this.nfCursorBlinkInterval && this.nfCursorBlinkInterval[nfId]) {
+            clearInterval(this.nfCursorBlinkInterval[nfId]);
+        }
+        this.nfCursorBlinkInterval = this.nfCursorBlinkInterval || {};
+
+        let visible = true;
+        this.nfCursorBlinkInterval[nfId] = setInterval(() => {
+            const cursorEl = document.getElementById(`nf-cursor-${nfId}`);
+            if (cursorEl) {
+                cursorEl.style.opacity = visible ? '1' : '0';
+                visible = !visible;
+            }
+        }, 500);
+    }
+
+    /**
+     * Setup keyboard handling for NF terminal
+     * @param {Object} nf - Network Function
+     * @param {HTMLElement} terminalModal - Terminal modal element
+     * @param {HTMLElement} output - Output element
+     */
+    setupNFKeyboardHandling(nf, terminalModal, output) {
+        const keyHandler = async (e) => {
+            // Only handle if this terminal is visible
+            if (!terminalModal.classList.contains('show')) {
+                return;
+            }
+
+            // Handle Ctrl+C to stop iperf3 server
+            if (e.ctrlKey && e.key === 'c' && this.iperf3Servers.has(nf.id)) {
+                e.preventDefault();
+                this.stopIperf3Server(nf, output);
+                this.nfCurrentInput[nf.id] = '';
+                this.updateNFInputDisplay(nf.id);
+                this.createNFInputLine(nf, output);
+                return;
+            }
+
+            // Handle Ctrl+L to clear screen
+            if (e.ctrlKey && e.key === 'l') {
+                e.preventDefault();
+                output.innerHTML = '';
+                this.createNFInputLine(nf, output);
+                return;
+            }
+
+            // Handle Enter to execute command
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const command = this.nfCurrentInput[nf.id].trim();
+
+                // Remove the active input line
+                const activeInput = output.querySelector(`#active-nf-input-${nf.id}`);
+                if (activeInput) {
+                    activeInput.remove();
+                }
+
+                // Display the executed command
+                if (command) {
+                    this.addTerminalLine(output, `${nf.name}> ${command}`, 'command');
+                    
+                    // Add to history
+                    this.nfCommandHistory[nf.id].push(command);
+                    this.nfHistoryIndex[nf.id] = this.nfCommandHistory[nf.id].length;
+                    
+                    // Process command
+                    await this.processWindowsCommand(nf, command, output);
+                } else {
+                    // Empty command, just show prompt
+                    this.addTerminalLine(output, `${nf.name}>`, 'command');
+                }
+
+                // Reset current input and cursor position
+                this.nfCurrentInput[nf.id] = '';
+                this.nfCursorPosition[nf.id] = 0;
+
+                // Create new input line
+                this.createNFInputLine(nf, output);
+                return;
+            }
+
+            // Handle Up arrow for history
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (this.nfHistoryIndex[nf.id] > 0) {
+                    this.nfHistoryIndex[nf.id]--;
+                    this.nfCurrentInput[nf.id] = this.nfCommandHistory[nf.id][this.nfHistoryIndex[nf.id]] || '';
+                    this.nfCursorPosition[nf.id] = this.nfCurrentInput[nf.id].length;
+                    this.updateNFInputDisplay(nf.id);
+                }
+                return;
+            }
+
+            // Handle Down arrow for history
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (this.nfHistoryIndex[nf.id] < this.nfCommandHistory[nf.id].length - 1) {
+                    this.nfHistoryIndex[nf.id]++;
+                    this.nfCurrentInput[nf.id] = this.nfCommandHistory[nf.id][this.nfHistoryIndex[nf.id]] || '';
+                } else {
+                    this.nfHistoryIndex[nf.id] = this.nfCommandHistory[nf.id].length;
+                    this.nfCurrentInput[nf.id] = '';
+                }
+                this.nfCursorPosition[nf.id] = this.nfCurrentInput[nf.id].length;
+                this.updateNFInputDisplay(nf.id);
+                return;
+            }
+
+            // Handle Left arrow to move cursor left
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                if (this.nfCursorPosition[nf.id] > 0) {
+                    this.nfCursorPosition[nf.id]--;
+                    this.updateNFInputDisplay(nf.id);
+                }
+                return;
+            }
+
+            // Handle Right arrow to move cursor right
+            if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                if (this.nfCursorPosition[nf.id] < this.nfCurrentInput[nf.id].length) {
+                    this.nfCursorPosition[nf.id]++;
+                    this.updateNFInputDisplay(nf.id);
+                }
+                return;
+            }
+
+            // Handle Tab for auto-completion
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                this.handleNFTabCompletion(nf, output);
+                return;
+            }
+
+            // Handle Backspace (delete character before cursor)
+            if (e.key === 'Backspace') {
+                e.preventDefault();
+                if (this.nfCursorPosition[nf.id] > 0) {
+                    this.nfCurrentInput[nf.id] = this.nfCurrentInput[nf.id].substring(0, this.nfCursorPosition[nf.id] - 1) + 
+                                               this.nfCurrentInput[nf.id].substring(this.nfCursorPosition[nf.id]);
+                    this.nfCursorPosition[nf.id]--;
+                    this.updateNFInputDisplay(nf.id);
+                }
+                return;
+            }
+
+            // Handle Delete (delete character after cursor)
+            if (e.key === 'Delete') {
+                e.preventDefault();
+                if (this.nfCursorPosition[nf.id] < this.nfCurrentInput[nf.id].length) {
+                    this.nfCurrentInput[nf.id] = this.nfCurrentInput[nf.id].substring(0, this.nfCursorPosition[nf.id]) + 
+                                               this.nfCurrentInput[nf.id].substring(this.nfCursorPosition[nf.id] + 1);
+                    this.updateNFInputDisplay(nf.id);
+                }
+                return;
+            }
+
+            // Handle Home (move cursor to beginning)
+            if (e.key === 'Home') {
+                e.preventDefault();
+                this.nfCursorPosition[nf.id] = 0;
+                this.updateNFInputDisplay(nf.id);
+                return;
+            }
+
+            // Handle End (move cursor to end)
+            if (e.key === 'End') {
+                e.preventDefault();
+                this.nfCursorPosition[nf.id] = this.nfCurrentInput[nf.id].length;
+                this.updateNFInputDisplay(nf.id);
+                return;
+            }
+
+            // Handle character input (printable characters)
+            if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+                e.preventDefault();
+                this.nfCurrentInput[nf.id] = this.nfCurrentInput[nf.id].substring(0, this.nfCursorPosition[nf.id]) + 
+                                           e.key + 
+                                           this.nfCurrentInput[nf.id].substring(this.nfCursorPosition[nf.id]);
+                this.nfCursorPosition[nf.id]++;
+                this.updateNFInputDisplay(nf.id);
+            }
+        };
+
+        // Use persistent bound handlers per NF to avoid duplication
+        this.nfBoundKeyHandlers = this.nfBoundKeyHandlers || {};
+        if (this.nfBoundKeyHandlers[nf.id]) {
+            document.removeEventListener('keydown', this.nfBoundKeyHandlers[nf.id]);
+        }
+        this.nfBoundKeyHandlers[nf.id] = keyHandler;
+        document.addEventListener('keydown', keyHandler);
+    }
+
+    /**
+     * Update the NF input text display with cursor at correct position
+     * @param {string} nfId - NF ID
+     */
+    updateNFInputDisplay(nfId) {
+        const beforeEl = document.getElementById(`nf-input-before-${nfId}`);
+        const afterEl = document.getElementById(`nf-input-after-${nfId}`);
+        if (beforeEl && afterEl) {
+            const before = this.nfCurrentInput[nfId].substring(0, this.nfCursorPosition[nfId]);
+            const after = this.nfCurrentInput[nfId].substring(this.nfCursorPosition[nfId]);
+            beforeEl.textContent = before;
+            afterEl.textContent = after;
+            // Scroll to keep input visible
+            const output = beforeEl.closest('.terminal-output');
+            if (output) {
+                output.scrollTop = output.scrollHeight;
+            }
+        }
+    }
+
+    /**
+     * Handle Tab key for NF command completion
+     * @param {Object} nf - Network Function
+     * @param {HTMLElement} output - Output element
+     */
+    handleNFTabCompletion(nf, output) {
+        const commands = [
+            'help', 'ifconfig', 'ip addr', 'ping', 'ping subnet',
+            'cls', 'clear', 'exit', 'systeminfo', 'netstat',
+            'iperf3 -s', 'iperf3 -c', 'iperf3 -B', 'iperf3 -R'
+        ];
+
+        const input = this.nfCurrentInput[nf.id];
+        if (!input) return;
+
+        // Find matching commands (case-insensitive)
+        const matches = commands.filter(cmd => cmd.toLowerCase().startsWith(input.toLowerCase()));
+
+        if (matches.length === 0) {
+            // No matches - visual flicker feedback
+            const beforeEl = document.getElementById(`nf-input-before-${nf.id}`);
+            if (beforeEl) {
+                beforeEl.style.opacity = '0.3';
+                setTimeout(() => { if (beforeEl) beforeEl.style.opacity = '1'; }, 120);
+            }
+        } else if (matches.length === 1) {
+            // Single match - complete word-by-word
+            this.nfCurrentInput[nf.id] = this._nfCompleteNextWord(input, matches[0]);
+            this.nfCursorPosition[nf.id] = this.nfCurrentInput[nf.id].length;
+            this.updateNFInputDisplay(nf.id);
+        } else {
+            // Multiple matches - calculate LCP
+            const lcp = matches.reduce((prefix, cmd) => {
+                let i = 0;
+                while (i < prefix.length && i < cmd.length &&
+                       prefix[i].toLowerCase() === cmd[i].toLowerCase()) {
+                    i++;
+                }
+                return prefix.slice(0, i);
+            });
+
+            if (lcp.length > input.length) {
+                // Extend to next word boundary
+                this.nfCurrentInput[nf.id] = this._nfCompleteNextWord(input, lcp);
+                this.nfCursorPosition[nf.id] = this.nfCurrentInput[nf.id].length;
+                this.updateNFInputDisplay(nf.id);
+            } else {
+                // Show all matches, then restore the typed input
+                this.addTerminalLine(output, '', 'blank');
+                this.addTerminalLine(output, matches.join('  '), 'info');
+                this.addTerminalLine(output, '', 'blank');
+                // Recreate input line and restore what the user had typed
+                this.createNFInputLine(nf, output);
+                this.nfCurrentInput[nf.id] = input;
+                this.nfCursorPosition[nf.id] = input.length;
+                this.updateNFInputDisplay(nf.id);
+            }
+        }
+    }
+
+    /**
+     * Complete input up to the next word boundary from the full completion string.
+     * @param {string} val - Current input
+     * @param {string} full - Full completion candidate
+     * @returns {string}
+     */
+    _nfCompleteNextWord(val, full) {
+        const rest = full.slice(val.length);
+        const trimmed = rest.trimStart();
+        const spaceIdx = trimmed.indexOf(' ');
+        if (spaceIdx === -1) return full;
+        const leadingSpaces = rest.length - trimmed.length;
+        return val + rest.slice(0, leadingSpaces + spaceIdx + 1);
     }
 
     /**
@@ -2761,8 +3008,8 @@ class UIController {
 
         if (cmd === 'help' || cmd === '?') {
             this.showWindowsHelp(output);
-        } else if (cmd === 'ipconfig') {
-            this.showIPConfig(nf, output);
+        } else if (cmd === 'ifconfig') {
+            this.showifconfig(nf, output);
         } else if (cmd.startsWith('ping ')) {
             const target = args[1];
             if (target) {
@@ -2777,8 +3024,6 @@ class UIController {
         } else if (cmd === 'exit') {
             const closeBtn = document.getElementById('terminal-close');
             if (closeBtn) closeBtn.click();
-        } else if (cmd === 'dir') {
-            this.showDirectory(output);
         } else if (cmd === 'systeminfo') {
             this.showSystemInfo(nf, output);
         } else if (cmd === 'netstat') {
@@ -2822,7 +3067,7 @@ class UIController {
             'Available commands:',
             '',
             'HELP        - Display this help message',
-            'IPCONFIG    - Display network configuration (Windows style)',
+            'ifconfig    - Display network configuration (Windows style)',
             'IFCONFIG    - Display network interfaces (Linux style)',
             'PING        - Test network connectivity',
             'IPERF3      - Network throughput testing',
@@ -2845,7 +3090,7 @@ class UIController {
      * @param {Object} nf - Network Function
      * @param {HTMLElement} output - Output element
      */
-    showIPConfig(nf, output) {
+    showifconfig(nf, output) {
         const lines = [
             'Windows IP Configuration',
             '',
