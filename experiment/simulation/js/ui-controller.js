@@ -1460,8 +1460,8 @@ class UIController {
      * @param {Object} nf - Network Function
      */
     autoConnectToBusIfApplicable(nf) {
-        // Don't auto-connect UPF, gNB, and UE as per requirement
-        const excludedTypes = ['UPF', 'gNB', 'UE'];
+        // Don't auto-connect UPF, gNB, UE, MySQL, and ext-dn as per requirement
+        const excludedTypes = ['UPF', 'gNB', 'UE', 'MySQL', 'ext-dn'];
 
         if (excludedTypes.includes(nf.type)) {
             console.log(`🚫 Skipping auto-connect for ${nf.type} (excluded type)`);
