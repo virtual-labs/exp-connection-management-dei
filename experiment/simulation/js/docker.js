@@ -2487,7 +2487,7 @@ networks:
             const excludedNFIds = new Set();
             if (topology.nfs) {
                 topology.nfs.forEach(nf => {
-                    if (nf.type === 'gNB' || nf.type === 'UE') {
+                    if (nf.type === 'gNB' || nf.type === 'UE' || nf.type === 'MySQL' || nf.type === 'ext-dn') {
                         excludedNFIds.add(nf.id);
                     }
                 });
@@ -2501,7 +2501,7 @@ networks:
                     const excludedNFIds = new Set();
                     if (topology.nfs) {
                         topology.nfs.forEach(nf => {
-                            if (nf.type === 'gNB' || nf.type === 'UE') {
+                            if (nf.type === 'gNB' || nf.type === 'UE' || nf.type === 'MySQL' || nf.type === 'ext-dn') {
                                 excludedNFIds.add(nf.id);
                             }
                         });
@@ -2864,8 +2864,8 @@ networks:
      * @param {Object} nf - Network Function
      */
     autoConnectNFToBus(nf) {
-        // Don't auto-connect UPF, gNB, and UE as per requirement
-        const excludedTypes = ['UPF', 'gNB', 'UE'];
+        // Don't auto-connect UPF, gNB, UE, MySQL, and ext-dn as per requirement
+        const excludedTypes = ['UPF', 'gNB', 'UE', 'MySQL', 'ext-dn'];
         
         if (excludedTypes.includes(nf.type)) {
             console.log(`🚫 Skipping auto-connect for ${nf.type} (excluded type)`);

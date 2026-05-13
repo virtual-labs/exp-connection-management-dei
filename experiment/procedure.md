@@ -102,11 +102,15 @@ watch docker compose -f docker-compose.yml ps -a
 
 <img src="images/prd7.png" width="90%">
 
-*Fig: Automatic one-click core network deployment with all network functions connected*
+*Fig: Automatic one-click core network deployment*
 
 ---
 
 **Option C (Manual):** Manually add each Network Function using the **➕ Add NF** button and connect them using the **Select Source** and **Select Destination** buttons in the left sidebar.
+
+<img src="images/prd24.png" width="90%">
+
+*Fig: Core Network Deployment*
 
 ## Step 2: Enable Connection Management Mode
 
@@ -281,7 +285,7 @@ Click **Step 12** in the right panel.
 - **Action:** gNB confirms PDU session resource setup and provides gNB tunnel endpoint.
 - **Observation:** A packet travels from gNB to AMF. The response includes the gNB TEID (0x2001) and success status.
 
-<img src="images/prd21.png" width="90%">
+<img src="images/prd22.png" width="90%">
 
 *Fig: PDU Session Resource Setup Response*
 
@@ -294,6 +298,6 @@ Click **Step 13** in the right panel.
 - **Action:** AMF sends final NAS Service Accept message to UE, confirming PDU session is established.
 - **Observation:** A packet travels from AMF to UE. The UE receives confirmation that the PDU Session is marked as Established. The connection management process is now complete.
 
-<img src="images/prd22.png" width="90%">
+<img src="images/prd21.png" width="90%">
 
 *Fig: NAS Service Accept*
