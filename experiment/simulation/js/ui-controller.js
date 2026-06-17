@@ -302,7 +302,7 @@ class UIController {
     setupConnectionModeListener() {
         if (window.dataStore) {
             window.dataStore.subscribe((event, data) => {
-                if (event === 'nf-added') {
+                if (event === 'nf-added' || event === 'data-imported' || event === 'data-cleared' || event === 'nf-removed') {
                     this.updateLogNFFilter();
                 }
             });
@@ -893,6 +893,14 @@ class UIController {
             });
         }
 
+        // Restrict IP field to digits and dots only
+        const configIp = document.getElementById('config-ip');
+        if (configIp) {
+            configIp.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^0-9.]/g, '');
+            });
+        }
+
         // Start button handler
         const startBtn = document.getElementById('btn-start-nf');
         startBtn.addEventListener('click', () => {
@@ -1081,6 +1089,16 @@ class UIController {
                     }
                 }
             });
+        }
+
+        // Restrict IP field to digits and dots only (only for non-UE types)
+        if (nf.type !== 'UE') {
+            const configIp = document.getElementById('config-ip');
+            if (configIp) {
+                configIp.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/[^0-9.]/g, '');
+                });
+            }
         }
 
         // Save button handler
@@ -1347,19 +1365,32 @@ class UIController {
 
         // Standard NF configuration
         const ipAddress = document.getElementById('config-ip')?.value;
-        const port = parseInt(document.getElementById('config-port')?.value);
+        const portInput = document.getElementById('config-port')?.value;
         const httpProtocol = document.getElementById('config-http-protocol')?.value;
 
-        if (!ipAddress || !port) {
+        if (!ipAddress || !portInput) {
             alert('Please fill all required fields');
             return;
         }
 
-        // Validate IP address format
+        const errors = [];
+
+        // Validate IP address
         if (!this.isValidIP(ipAddress)) {
-            alert('❌ Invalid IP address format!\n\nPlease enter a valid IP address (e.g., 192.168.1.20)');
+            errors.push('Invalid IP address! IP must be between 1.0.0.0 and 255.255.255.255, only digits and dots allowed, 0.0.0.0 is not allowed.');
+        }
+
+        // Validate port
+        if (!this.isValidPort(portInput)) {
+            errors.push('Invalid port! Port must be numeric only, 4-6 digits long.');
+        }
+
+        if (errors.length > 0) {
+            alert('❌ Invalid Entries!\n\n' + errors.join('\n'));
             return;
         }
+
+        const port = parseInt(portInput, 10);
 
         // Check for IP conflicts
         if (!window.nfManager?.isIPAddressAvailable(ipAddress)) {
@@ -1606,19 +1637,32 @@ class UIController {
 
         // Standard NF configuration
         const ipAddress = document.getElementById('config-ip')?.value;
-        const port = parseInt(document.getElementById('config-port')?.value);
+        const portInput = document.getElementById('config-port')?.value;
         const httpProtocol = document.getElementById('config-http-protocol')?.value;
 
-        if (!ipAddress || !port) {
+        if (!ipAddress || !portInput) {
             alert('Please fill all required fields');
             return;
         }
 
-        // Validate IP address format
+        const errors = [];
+
+        // Validate IP address
         if (!this.isValidIP(ipAddress)) {
-            alert('❌ Invalid IP address format!\n\nPlease enter a valid IP address (e.g., 192.168.1.20)');
+            errors.push('Invalid IP address! IP must be between 1.0.0.0 and 255.255.255.255, only digits and dots allowed, 0.0.0.0 is not allowed.');
+        }
+
+        // Validate port
+        if (!this.isValidPort(portInput)) {
+            errors.push('Invalid port! Port must be numeric only, 4-6 digits long.');
+        }
+
+        if (errors.length > 0) {
+            alert('❌ Invalid Entries!\n\n' + errors.join('\n'));
             return;
         }
+
+        const port = parseInt(portInput, 10);
 
         // Check for IP conflicts (excluding current NF)
         if (nf.config.ipAddress !== ipAddress) {
@@ -2262,6 +2306,40 @@ class UIController {
     }
 
 
+
+    /**
+     * Validate IP address
+     * @param {string} ip - IP address to validate
+     * @returns {boolean} True if valid
+     */
+    isValidIP(ip) {
+        if (!ip) return false;
+        const parts = ip.split('.');
+        if (parts.length !== 4) return false;
+        for (let part of parts) {
+            if (!/^\d+$/.test(part)) return false;
+            const num = parseInt(part, 10);
+            if (num < 0 || num > 255) return false;
+        }
+        if (ip === '0.0.0.0') return false;
+        const firstOctet = parseInt(parts[0], 10);
+        if (firstOctet < 1) return false;
+        return true;
+    }
+
+    /**
+     * Validate port number
+     * @param {string|number} port - Port to validate
+     * @returns {boolean} True if valid
+     */
+    isValidPort(port) {
+        const portStr = String(port);
+        if (!/^\d+$/.test(portStr)) return false;
+        const portNum = parseInt(portStr, 10);
+        if (portNum < 1000 || portNum > 999999) return false;
+        if (portStr.length < 4 || portStr.length > 6) return false;
+        return true;
+    }
 
     /**
      * Escape HTML to prevent XSS
