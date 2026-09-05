@@ -1,0 +1,263 @@
+{
+  "version": 2.0,
+  "filters": {
+    "difficulty": ["beginner", "intermediate"]
+  },
+  "questions": [
+    {
+      "question": "Q1. Why must the Core Network be deployed first?",
+      "answers": {
+        "a": "Only authentication",
+        "b": "All NFs must be active",
+        "c": "Immediate user plane",
+        "d": "Skip NAS"
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q2. Which mode activates Connection Management experiment?",
+      "answers": {
+        "a": "Deploy Core",
+        "b": "Add NF",
+        "c": "Connection Management",
+        "d": "Reset"
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Incorrect.",
+        "c": "Correct.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q3. Which message starts RRC connection?",
+      "answers": {
+        "a": "RRC Setup",
+        "b": "RRC Request",
+        "c": "NAS Request",
+        "d": "Context Setup"
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q4. RRC Request includes:",
+      "answers": {
+        "a": "QoS",
+        "b": "UE identity + cause",
+        "c": "TEID",
+        "d": "Session ID"
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q5. Who allocates radio resources?",
+      "answers": {
+        "a": "UE",
+        "b": "AMF",
+        "c": "gNB",
+        "d": "SMF"
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Incorrect.",
+        "c": "Correct.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q6. NAS Service Request is carried in:",
+      "answers": {
+        "a": "RRC Setup",
+        "b": "RRC Setup Complete",
+        "c": "PFCP",
+        "d": "SM Context"
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q7. N1 interface connects:",
+      "answers": {
+        "a": "gNB-AMF",
+        "b": "UE-AMF",
+        "c": "SMF-UPF",
+        "d": "UE-gNB"
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q8. AMF role after Service Request:",
+      "answers": {
+        "a": "Forward traffic",
+        "b": "Validate context",
+        "c": "Radio allocation",
+        "d": "PFCP rules"
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q9. AMF → SMF message:",
+      "answers": {
+        "a": "PFCP Req",
+        "b": "Update SM Context Req",
+        "c": "NAS Accept",
+        "d": "RRC Setup"
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q10. Who selects UPF?",
+      "answers": {
+        "a": "AMF",
+        "b": "gNB",
+        "c": "SMF",
+        "d": "UPF"
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Incorrect.",
+        "c": "Correct.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q11. Protocol between SMF and UPF:",
+      "answers": {
+        "a": "NGAP",
+        "b": "NAS",
+        "c": "PFCP",
+        "d": "RRC"
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Incorrect.",
+        "c": "Correct.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q12. PFCP Response confirms:",
+      "answers": {
+        "a": "Authentication",
+        "b": "Radio resources",
+        "c": "User-plane session establishment",
+        "d": "Registration"
+      },
+      "correctAnswer": "c",
+      "difficulty": "intermediate",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Incorrect.",
+        "c": "Correct.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q13. Tunnel information is sent to AMF via:",
+      "answers": {
+        "a": "NAS Accept",
+        "b": "Update SM Context Response",
+        "c": "PDU Setup",
+        "d": "RRC Setup"
+      },
+      "correctAnswer": "b",
+      "difficulty": "intermediate",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q14. AMF to gNB interface is:",
+      "answers": {
+        "a": "N1",
+        "b": "N2",
+        "c": "N3",
+        "d": "N4"
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Correct.",
+        "c": "Incorrect.",
+        "d": "Incorrect."
+      }
+    },
+    {
+      "question": "Q15. Final confirmation to UE is:",
+      "answers": {
+        "a": "PDU Setup Response",
+        "b": "RRC Complete",
+        "c": "NAS Service Accept",
+        "d": "SM Context Response"
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner",
+      "explanations": {
+        "a": "Incorrect.",
+        "b": "Incorrect.",
+        "c": "Correct.",
+        "d": "Incorrect."
+      }
+    }
+  ]
+}
