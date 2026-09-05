@@ -17,7 +17,11 @@ Understanding these procedures is important for analyzing **UE behavior, network
 
 In the 5G Core network, **Connection Management (CM)** states describe the signaling connectivity between the **UE and the AMF**.
 
-5G defines **two primary CM states** that control the UE's connectivity behavior.
+As illustrated in **Fig 1**, 5G defines two primary CM states that control the UE's connectivity behavior. A UE transitions from the **CM-IDLE** state to the **CM-CONNECTED** state by initiating a Service Request procedure. Conversely, it returns to the **CM-IDLE** state when the network triggers a UE Context Release procedure due to inactivity.
+
+<img src="images/fig-1.svg" width="45%">
+
+*Fig 1: CM-IDLE vs CM-CONNECTED State Diagram*
 
 ### 2.1 CM-IDLE State
 
@@ -51,11 +55,7 @@ When the UE is in CM-CONNECTED:
 - The gNB stores **UE-specific RRC configurations and Data Radio Bearers (DRBs)**.
 - **Handover procedures** occur when the UE moves between cells.
 
-Although this state enables continuous communication, it consumes more **radio resources and battery power**. Therefore the network transitions the UE back to **CM-IDLE** when communication is not required.
-
-<img src="images/fig-1.svg" width="45%">
-
-*Fig: CM-IDLE vs CM-CONNECTED State Diagram*
+Although this state enables continuous communication, it consumes more **radio resources and battery power**. Therefore, the network transitions the UE back to **CM-IDLE** when communication is not required.
 
 ## 3. Service Request Procedure (CM-IDLE → CM-CONNECTED)
 
@@ -71,7 +71,7 @@ When the UE is in **CM-IDLE**:
 - gNB does not maintain **RRC context**
 - Downlink traffic requires **paging**
 
-Therefore a Service Request is required before communication resumes.
+Therefore, a Service Request is required before communication resumes.
 
 ### 3.2 Types of Service Request
 
@@ -99,6 +99,14 @@ Sequence:
 
 
 ### 3.3 Service Request Signaling Flow
+
+**Fig 2** illustrates the step-by-step message exchange required for a Service Request. This procedure highlights the interactions between the UE, gNB, AMF, and SMF as they establish the RRC connection, validate security, coordinate session management, and successfully restore the data bearers, thereby moving the UE into the CM-CONNECTED state.
+
+<img src="images/fig-2.svg" width="45%">
+
+*Fig 2: 5G Service Request Signaling Flow*
+
+The signaling flow consists of the following steps:
 
 - #### Step 1: RRC Connection Establishment
 
@@ -154,10 +162,6 @@ gNB responds:
 
 Signaling and data paths are restored.
 
-<img src="images/fig-2.svg" width="45%">
-
-*Fig: 5G Service Request Signaling Flow*
-
 ## 4. UE Context Release Procedure (CM-CONNECTED → CM-IDLE)
 
 The **UE Context Release procedure** moves the UE from **CM-CONNECTED to CM-IDLE** when communication is no longer required.
@@ -189,6 +193,14 @@ Operators may configure special policies (e.g., IoT devices).
 
 ### 4.3 UE Context Release Flow
 
+**Fig 3** depicts the steps involved in the UE Context Release procedure. It demonstrates how the AMF commands the gNB to release the connection, prompting the gNB to send an RRC Release message to the UE. Once the connection is released and confirmed, the UE transitions back to the resource-saving CM-IDLE state.
+
+<img src="images/fig-3.svg" width="45%">
+
+*Fig 3: UE Context Release Signaling Flow*
+
+The context release flow consists of the following steps:
+
 - #### Step 1: AMF Command
 
 **UE Context Release Command (AMF → gNB)**
@@ -212,7 +224,3 @@ AMF keeps minimal context:
 - Tracking Area
 - Paging data
 - 5G-GUTI
-
-<img src="images/fig-3.svg" width="45%">
-
-*Fig: UE Context Release Signaling Flow*
