@@ -1,3 +1,6 @@
+> **Audio Explanation:** For a comprehensive understanding of these theoretical concepts, you can listen on YouTube. 
+> [**Click here to listen the audio**](https://youtu.be/QkOU5yTaTxw)
+
 ## 1. 5G Connection Management (CM)
 
 Connection Management (CM) is one of the fundamental **Non-Access Stratum (NAS)** functions in the 5G Core network. It defines how a **User Equipment (UE)** establishes, maintains, suspends, and resumes signaling connectivity with the **Access and Mobility Management Function (AMF)**.
