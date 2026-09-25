@@ -1,5 +1,7 @@
-> **Audio Explanation:** For a comprehensive understanding of these theoretical concepts, you can listen on YouTube. 
-> [**Click here to listen the audio**](https://youtu.be/QkOU5yTaTxw)
+> **Audio Explanations:** For a more comprehensive understanding of these theoretical concepts, supplementary audio guides are available on YouTube.
+> 
+> - [**Listen in English**](https://youtu.be/nQvkmXDgf3I)
+> - [**Listen in Hindi**](https://youtu.be/QkOU5yTaTxw)
 
 ## 1. 5G Connection Management (CM)
 
